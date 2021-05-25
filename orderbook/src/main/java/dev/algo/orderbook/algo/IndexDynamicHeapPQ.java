@@ -6,15 +6,18 @@ import java.util.NoSuchElementException;
 /**
  * Priority queue of generic keys, using a comparator provided by the client.
  * <p/>
- * This implementation uses a <em>bynary heap</em>.
+ * This implementation uses a <em>binary heap</em> backed by a <em>dynamic resizing array</em>.
  * Insert and delete takes amortized O(n) time, because of resizing array operations.
  *
  * @param <Key>
  */
-public class IndexMaxPQ<Key> {
+public class IndexDynamicHeapPQ<Key> {
 
     // heap-ordered complete binary tree in pq[1..n] with pq[0] unused
-    private Key[] pq;
+    private int[] pq;//binary heap using 1-based indexing
+    private int[] qp;//
+    private Key[] keys;
+
     private int n;
     private final Comparator<Key> comparator;
 
@@ -22,7 +25,7 @@ public class IndexMaxPQ<Key> {
      * Initializes an empty priority queue using the given comparator
      * @param comparator
      */
-    public IndexMaxPQ(Comparator<Key> comparator){
+    public IndexDynamicHeapPQ(Comparator<Key> comparator){
         this(1, comparator);
     }
 
@@ -31,7 +34,7 @@ public class IndexMaxPQ<Key> {
      * @param initialCapacity
      * @param comparator
      */
-    public IndexMaxPQ(int initialCapacity, Comparator<Key> comparator){
+    public IndexDynamicHeapPQ(int initialCapacity, Comparator<Key> comparator){
         this.comparator = comparator;
         pq = (Key[]) new Object[initialCapacity+1];
         n = 0;
@@ -114,6 +117,12 @@ public class IndexMaxPQ<Key> {
     }
 
     // is pq[1..n] a max heap?
+
+    /**
+     * Package-visible method to test that pq[1..n] is a max heap.
+     * This method should be used in tests only
+     * @return
+     */
     boolean isMaxHeap() {
         for (int i = 1; i <= n; i++) {
             if (pq[i] == null) return false;
@@ -126,7 +135,7 @@ public class IndexMaxPQ<Key> {
     }
 
     // is subtree of pq[1..n] rooted at k a max heap?
-    boolean isMaxHeapOrdered(int k) {
+    private boolean isMaxHeapOrdered(int k) {
         if (k > n) return true;
         int left = 2*k;
         int right = 2*k + 1;

@@ -9,61 +9,50 @@ import static org.junit.jupiter.api.Assertions.*;
 class PQTest {
 
 
-
-    @Test
-    public void testHeap(){
-        ArrayList<Integer> heap = new ArrayList<>();
-        heap.add(0,null);
-        heap.add(1,1);
-        heap.add(2, 2);
-        assertNotNull(heap);
-        System.out.println(heap);
-    }
-
     @Test
     public void testDynamicHeapPqAsMaxHeap(){
-        DynamicHeapPQ<Character> dynamicHeapPq = new DynamicHeapPQ<>(Character::compareTo);
-        dynamicHeapPq.insert('P');
-        dynamicHeapPq.insert('Q');
-        dynamicHeapPq.insert('E');
-        assertEquals('Q', dynamicHeapPq.delTop());
-        assertEquals(2, dynamicHeapPq.size());
-        assertTrue(dynamicHeapPq.isMaxHeap());
-        dynamicHeapPq.insert('X');
-        dynamicHeapPq.insert('A');
-        dynamicHeapPq.insert('M');
-        assertEquals('X', dynamicHeapPq.delTop());
-        assertEquals(4, dynamicHeapPq.size());
-        assertTrue(dynamicHeapPq.isMaxHeap());
-        dynamicHeapPq.insert('P');
-        dynamicHeapPq.insert('L');
-        dynamicHeapPq.insert('E');
-        assertEquals('P', dynamicHeapPq.delTop());
-        assertEquals(6, dynamicHeapPq.size());
-        assertTrue(dynamicHeapPq.isMaxHeap());
+        DynamicHeapPQ<Character> maxPq = new DynamicHeapPQ<>(Character::compareTo);
+        maxPq.insert('P');
+        maxPq.insert('Q');
+        maxPq.insert('E');
+        assertEquals('Q', maxPq.delTop());
+        assertEquals(2, maxPq.size());
+        assertTrue(maxPq.isMaxHeap());
+        maxPq.insert('X');
+        maxPq.insert('A');
+        maxPq.insert('M');
+        assertEquals('X', maxPq.delTop());
+        assertEquals(4, maxPq.size());
+        assertTrue(maxPq.isMaxHeap());
+        maxPq.insert('P');
+        maxPq.insert('L');
+        maxPq.insert('E');
+        assertEquals('P', maxPq.delTop());
+        assertEquals(6, maxPq.size());
+        assertTrue(maxPq.isMaxHeap());
     }
 
     @Test
     public void testDynamicHeapPqAsMinHeap(){
-        DynamicHeapPQ<Character> dynamicHeapPq = new DynamicHeapPQ<>( (a,b) -> Character.compare(b,a));
-        dynamicHeapPq.insert('P');
-        dynamicHeapPq.insert('Q');
-        dynamicHeapPq.insert('E');
-        assertEquals('E', dynamicHeapPq.delTop());
-        assertEquals(2, dynamicHeapPq.size());
-        assertTrue(dynamicHeapPq.isMaxHeap());
-        dynamicHeapPq.insert('X');
-        dynamicHeapPq.insert('A');
-        dynamicHeapPq.insert('M');
-        assertEquals('A', dynamicHeapPq.delTop());
-        assertEquals(4, dynamicHeapPq.size());
-        assertTrue(dynamicHeapPq.isMaxHeap());
-        dynamicHeapPq.insert('P');
-        dynamicHeapPq.insert('L');
-        dynamicHeapPq.insert('E');
-        assertEquals('E', dynamicHeapPq.delTop());
-        assertEquals(6, dynamicHeapPq.size());
-        assertTrue(dynamicHeapPq.isMaxHeap());
+        DynamicHeapPQ<Character> minPq = new DynamicHeapPQ<>( (a,b) -> Character.compare(b,a));
+        minPq.insert('P');
+        minPq.insert('Q');
+        minPq.insert('E');
+        assertEquals('E', minPq.delTop());
+        assertEquals(2, minPq.size());
+        assertTrue(minPq.isMaxHeap());
+        minPq.insert('X');
+        minPq.insert('A');
+        minPq.insert('M');
+        assertEquals('A', minPq.delTop());
+        assertEquals(4, minPq.size());
+        assertTrue(minPq.isMaxHeap());
+        minPq.insert('P');
+        minPq.insert('L');
+        minPq.insert('E');
+        assertEquals('E', minPq.delTop());
+        assertEquals(6, minPq.size());
+        assertTrue(minPq.isMaxHeap());
     }
 
     @Test
