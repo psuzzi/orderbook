@@ -14,10 +14,9 @@ import java.util.NoSuchElementException;
 public class IndexDynamicHeapPQ<Key> {
 
     // heap-ordered complete binary tree in pq[1..n] with pq[0] unused
-    private int[] pq;//binary heap using 1-based indexing
-    private int[] qp;//
-    private Key[] keys;
-
+    private int[] pq;       // binary heap using 1-based indexing
+    private int[] qp;       // inverse of pq - qp[pq[i]] = pq[qp[i]] = i
+    private Key[] keys;     // keys[i] = priority of i
     private int n;
     private final Comparator<Key> comparator;
 
@@ -36,39 +35,102 @@ public class IndexDynamicHeapPQ<Key> {
      */
     public IndexDynamicHeapPQ(int initialCapacity, Comparator<Key> comparator){
         this.comparator = comparator;
-        pq = (Key[]) new Object[initialCapacity+1];
         n = 0;
+        keys = (Key[]) new Object[initialCapacity+1];
+        pq = new int[initialCapacity+1];
+        qp = new int[initialCapacity+1];
+        // -1 denote absence of values in the inverse map
+        for(int i=0; i<= initialCapacity; i++)
+            qp[i] = -1;
     }
 
 
     private void resize(int capacity){
         assert capacity>n;
-        Key[] temp = (Key[]) new Object[capacity];
+        Key[] tempKeys = (Key[]) new Object[capacity];
+        int[] tempPq = new int[capacity];
+        int[] tempQp = new int[capacity];
         for(int i=1; i<=n; i++){
-            temp[i] = pq[i];
+            tempKeys[i] = keys[i];
+            tempPq[i] = pq[i];
+            tempQp[i] = qp[i];
         }
-        pq = temp;
+        keys = tempKeys;
+        pq = tempPq;
+        qp = tempQp;
     }
 
     /**
-     * Add a new key to this PQ
-     * @param v
+     * Adds a new Key associated to the given key index
+     * @param ki
+     * @param key
      */
-    public void insert(Key v){
+    public void insert(int ki, Key key){
+        if (contains(ki)) throw new IllegalArgumentException("index is already in the priority queue");
         // double size of the array when needed
         if( n== pq.length-1) resize(2 * pq.length);
-        pq[++n] = v;
+        validateIndex(ki);
+        n++;
+        qp[ki] = n;
+        pq[n] = ki;
+        keys[ki] = key;
         swim(n);
     }
 
-    public Key delTop(){
+    /**
+     * Tells if exists an item with the given key index
+     * @param ki
+     * @return
+     */
+    public boolean contains(int ki){
+        return qp[ki] != -1;
+    }
+
+    /**
+     * Delete the key at the specified key index
+     * @param ki
+     */
+    public void delete(int ki){
+        validateIndex(ki);
+        if(!contains(ki)){
+            throw new NoSuchElementException("Index not in the priority queue");
+        }
+        int index = qp[ki];
+        // move to n-1, and decrease size
+        exch(index, n--);
+        // reheapify
+        swim(index);
+        sink(index);
+        // delete
+        keys[ki] = null;
+        qp[ki] = -1;
+    }
+
+    private void validateIndex(int i){
+        if (i < 0) throw new IllegalArgumentException("index is negative: " + i);
+        if (i >= pq.length) throw new IllegalArgumentException("index >= capacity: " + i);
+    }
+
+    /**
+     * Remove top key and returns its associated index.
+     *
+     * @return
+     */
+    public int delTop(){
         if(isEmpty()){
             throw new NoSuchElementException("Priority queue underflow");
         }
-        Key top = pq[1];
+
+        // index of top item
+        int top = pq[1];
         exch(1, n--);//exchange with last item
-        sink(1);
-        pq[n+1] = null;//remove last item
+        sink(1);// reheapify
+
+        // remove last item
+        qp[top] = -1;
+        keys[top] = null;
+        pq[n+1] = -1;
+
         // halve the size of the array when needed
         if( (n>0) && (n==(pq.length-1)/4))
             resize(pq.length/2);
@@ -79,25 +141,27 @@ public class IndexDynamicHeapPQ<Key> {
         return n==0;
     }
 
-    public Key top(){
-        return pq[1];
+    public Key topKey(){
+        return keys[pq[1]];
     }
 
     public int size(){
         return n;
     }
 
-    private void swim(int k){
-        while (k > 1 && less(k/2, k))
-        {
-            exch(k/2, k);
+    /***************************************************************************
+     * Heap helper functions.
+     ***************************************************************************/
+
+    private void swim(int k) {
+        while (k > 1 && less(k/2, k)) {
+            exch(k, k/2);
             k = k/2;
         }
     }
 
-    private void sink(int k){
-        while (2*k <= n)
-        {
+    private void sink(int k) {
+        while (2*k <= n) {
             int j = 2*k;
             if (j < n && less(j, j+1)) j++;
             if (!less(k, j)) break;
@@ -106,17 +170,27 @@ public class IndexDynamicHeapPQ<Key> {
         }
     }
 
-    private boolean less(int i, int j){
-        return comparator.compare(pq[i], pq[j])<0;
+    /***************************************************************************
+     * General helper functions.
+     ***************************************************************************/
+
+    private boolean less(int i, int j) {
+        Key iK = keys[pq[i]];
+        Key jK = keys[pq[j]];
+        return comparator.compare(iK, jK) < 0;
     }
 
-    private void exch(int i, int j){
-        Key t = pq[i];
+    private void exch(int i, int j) {
+        int swap = pq[i];
         pq[i] = pq[j];
-        pq[j] = t;
+        pq[j] = swap;
+        qp[pq[i]] = i;
+        qp[pq[j]] = j;
     }
 
-    // is pq[1..n] a max heap?
+    /***************************************************************************
+     * Testing helper functions.
+     ***************************************************************************/
 
     /**
      * Package-visible method to test that pq[1..n] is a max heap.
@@ -125,12 +199,12 @@ public class IndexDynamicHeapPQ<Key> {
      */
     boolean isMaxHeap() {
         for (int i = 1; i <= n; i++) {
-            if (pq[i] == null) return false;
+            if (keys[pq[i]] == null) return false;
         }
         for (int i = n+1; i < pq.length; i++) {
-            if (pq[i] != null) return false;
+            if (keys[pq[i]] != null) return false;
         }
-        if (pq[0] != null) return false;
+        if (keys[pq[0]] != null) return false;
         return isMaxHeapOrdered(1);
     }
 
@@ -143,9 +217,6 @@ public class IndexDynamicHeapPQ<Key> {
         if (right <= n && less(k, right)) return false;
         return isMaxHeapOrdered(left) && isMaxHeapOrdered(right);
     }
-
-
-
 
 }
 

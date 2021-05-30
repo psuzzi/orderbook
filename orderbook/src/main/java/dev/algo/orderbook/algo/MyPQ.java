@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 /**
- * Priority Queue of elements of which a comparator is provided by the client.
+ * (Max) Priority Queue of elements of which a comparator is provided by the client.
+ * To get a min PQ, just build it with a reversed-order comparator
  * @param <Key>
  */
 public class MyPQ<Key extends Comparable<Key>> {
