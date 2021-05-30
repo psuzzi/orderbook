@@ -7,33 +7,27 @@ import java.util.NoSuchElementException;
 import static java.lang.Math.min;
 
 /**
- *  The {@code IndexMaxPQ} class represents an indexed priority queue of generic keys.
- *  It supports the usual <em>insert</em> and <em>delete-the-maximum</em>
- *  operations, along with <em>delete</em> and <em>change-the-key</em>
- *  methods. In order to let the client refer to items on the priority queue,
- *  an integer between {@code 0} and {@code maxN - 1}
- *  is associated with each key—the client
- *  uses this integer to specify which key to delete or change.
- *  It also supports methods for peeking at a maximum key,
- *  testing if the priority queue is empty, and iterating through
- *  the keys.
- *  <p>
- *  This implementation uses a <em>binary heap</em> along with an
- *  array to associate keys with integers in the given range.
- *  The <em>insert</em>, <em>delete-the-maximum</em>, <em>delete</em>,
- *  <em>change-key</em>, <em>decrease-key</em>, and <em>increase-key</em>
- *  operations take &Theta;(log <em>n</em>) time in the worst case,
- *  where <em>n</em> is the number of elements in the priority queue.
- *  Construction takes time proportional to the specified capacity.
- *  <p>
- *  @see <a href="https://algs4.cs.princeton.edu/24pq">Section 2.4</a> of
- *  <i>Algorithms, 4th Edition</i> by Robert Sedgewick and Kevin Wayne.
+ * Indexed priority queue of generic keys. It supports <em>insert</em> and <em>delete-the-maximum</em> operations,
+ * along with <em>delete</em> methods.
+ * <p>
+ * In order to let the client refer to items on the priority queue, an integer between {@code 0} and {@code maxN}
+ * is associated with each key. The client uses this integer to specify which key to delete.
+ * <p>
+ * This implementation uses a <em>binary heap</em> along with an array to associate keys with integers in the given range.
+ * <p>
+ * The <em>insert</em>, <em>delete-the-maximum</em>, and <em>delete</em> operations take &Theta;(log <em>n</em>) time
+ * in the worst case,  where <em>n</em> is the number of elements in the priority queue.
+ * Construction takes time proportional to the specified capacity.
+ * <p>
  *
- *  @author Robert Sedgewick
- *  @author Kevin Wayne
- *  @author Patrik Suzzi
+ * @see <a href="https://algs4.cs.princeton.edu/24pq">Section 2.4</a>
+ *  of <i>Algorithms, 4th Edition</i> by Robert Sedgewick and Kevin Wayne.
  *
- *  @param <Key> the generic type of key on this priority queue
+ * @author Robert Sedgewick
+ * @author Kevin Wayne
+ * @author Patrik Suzzi
+ *
+ * @param <Key> the generic type of key on this priority queue
  */
 public class IndexMaxPQ<Key> {
 
@@ -50,9 +44,9 @@ public class IndexMaxPQ<Key> {
     }
 
     /**
-     * Initializes an empty indexed priority queue with indices between {@code 0} and {@code maxN - 1}.
+     * Initializes an empty indexed priority queue with indices between {@code 0} and {@code maxN}.
      *
-     * @param  maxN the keys on this priority queue are index from {@code 0} to {@code maxN - 1}
+     * @param  maxN the keys on this priority queue are index from {@code 0} to {@code maxN}
      * @throws IllegalArgumentException if {@code maxN < 0}
      */
     public IndexMaxPQ(int maxN, Comparator<Key> comparator) {
@@ -205,7 +199,7 @@ public class IndexMaxPQ<Key> {
         qp[pq[j]] = j;
     }
 
-    // resize the underlying array to have the given capacity
+    /* resize the underlying array to have the given capacity */
     private void resize(int capacity){
         assert capacity>n;
         // new capacity will be new keys.length +1
@@ -247,12 +241,5 @@ public class IndexMaxPQ<Key> {
             k = j;
         }
     }
-
-    /***************************************************************************
-     *
-     ***************************************************************************/
-
-
-
 
 }

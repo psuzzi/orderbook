@@ -2,33 +2,53 @@ package dev.algo.orderbook.view.impl;
 
 import java.util.*;
 
-public class IndexHeap<K,V> extends IndexMaxPQ<K>{
+/**
+ * Dynamic Indexed Heap. Each key inserted is associated to a value. 
+ * The key is inserted into an internal implementation of a PQ.
+ * <p>
+ * This heap can be used both as max and min heap, depending on the comparator parameter.
+ * <ul>
+ *     <li>Max Heap</li> : Comparator.naturalOrder()
+ *     <li>Min Heap</li> : Comparator.reverseOrder()
+ * </ul>
+ * <p>
+ * The heap can expand, when the number of the elements increases.
+ *
+ * @param <Key>
+ * @param <Value>
+ */
+public class IndexHeap<Key, Value> extends IndexMaxPQ<Key>{
 
-    private Comparator<K> comparator;
+    private Comparator<Key> comparator;
     private static final int DEFAULT_INITIAL_CAPACITY = 16;
 
     private int currentIndex = 0;
-    private Map<K,V> kvMap = new HashMap<>();
-    private Map<K, Integer> kiMap = new HashMap<>();
+    private Map<Key, Value> kvMap = new HashMap<>();
+    private Map<Key, Integer> kiMap = new HashMap<>();
     private LinkedList<Integer> freeIndices = new LinkedList<>();
 
-    public IndexHeap(Comparator<K> comparator) {
+    /** Initialize the heap with the default initial capacity and the given comparator */
+    public IndexHeap(Comparator<Key> comparator) {
         super(DEFAULT_INITIAL_CAPACITY, comparator);
     }
 
-    public IndexHeap(int initialCapacity, Comparator<K> comparator) {
+    /** Initialize the heap with the given initial capacity and comparator */
+    public IndexHeap(int initialCapacity, Comparator<Key> comparator) {
         super(initialCapacity, comparator);
     }
 
-    public boolean containsKey(K price) {
+    /** Returns true if the key is contained in the heap */
+    public boolean containsKey(Key price) {
         return kiMap.containsKey(price);
     }
 
-    public V getValue(K price) {
+    /** Returns the value associated to the given key */
+    public Value getValue(Key price) {
         return kvMap.get(price);
     }
 
-    public void removeKey(K price) {
+    /** Remove the given key from the heap, and invalidate the corresponding PQ key index */
+    public void removeKey(Key price) {
         int deleteKeyIndex = kiMap.get(price);
         delete(deleteKeyIndex);// removes the key from the heap
         kvMap.remove(price);
@@ -37,18 +57,19 @@ public class IndexHeap<K,V> extends IndexMaxPQ<K>{
     }
 
     /**
-     * Associate the
+     * Associate the key to its value and insert the key into the PQ, making sure of getting an available key index.
      * @param price
      * @param aggregatedOrder
      */
-    public void put(K price, V aggregatedOrder) {
+    public void put(Key price, Value aggregatedOrder) {
         int keyIndex = (freeIndices.isEmpty()) ? currentIndex++ : freeIndices.remove();
         kiMap.put(price, keyIndex);
         kvMap.put(price, aggregatedOrder);
         insert(keyIndex, price);
     }
 
-    public K topKey() {
+    /** Return the top key: the max (min) value for a Max PQ (Min PQ) */ 
+    public Key topKey() {
         return maxKey();
     }
 }

@@ -7,6 +7,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Implementation of a Level 2 Electronic Order Book.
+ */
 public class Level2ViewImpl implements Level2View {
 
 

@@ -10,6 +10,9 @@ import java.math.BigDecimal;
 import static dev.algo.orderbook.view.Level2View.Side.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test the public methods of the {@code Level2ViewImplTest}
+ */
 class Level2ViewImplTest {
 
     Level2ViewImpl view;
@@ -20,6 +23,9 @@ class Level2ViewImplTest {
     }
 
 
+    /**
+     * Create new orders and test the correctness based on book depth and top of the book
+     */
     @Test
     void onNewOrder() {
         view.onNewOrder(BID, new BigDecimal(20), 10, 1001L);
@@ -35,6 +41,9 @@ class Level2ViewImplTest {
         assertEquals(new BigDecimal(23), view.getTopOfBook(ASK), "Lowest ask");
     }
 
+    /**
+     * Create new orders, delete some of thems, and test the correctness based on book depth and top of the book
+     */
     @Test
     void onCancelOrder() {
         view.onNewOrder(BID, new BigDecimal(20), 10, 1001L);
@@ -53,6 +62,9 @@ class Level2ViewImplTest {
         assertEquals(new BigDecimal(24), view.getTopOfBook(ASK), "Lowest ask");
     }
 
+    /**
+     * Create new orders, replace some of thems, and test the correctness based on book depth and top of the book.
+     */
     @Test
     void onReplaceOrder() {
         view.onNewOrder(BID, new BigDecimal(20), 10, 1001L);
@@ -68,6 +80,10 @@ class Level2ViewImplTest {
         assertEquals(new BigDecimal(23.5), view.getTopOfBook(ASK), "Lowest ask");
     }
 
+    /**
+     * Create new orders, perform some trades, and test the correctness based on book depth, top of the book, and
+     * size for price level.
+     */
     @Test
     void onTrade() {
         view.onNewOrder(BID, new BigDecimal(20), 10, 1001L);
@@ -87,6 +103,9 @@ class Level2ViewImplTest {
         assertEquals(10, size21, "Remaining size at price 21 after trade");
     }
 
+    /**
+     * Create new orders, and test the correctness of getSizeForPriceLevel().
+     */
     @Test
     void getSizeForPriceLevel() {
         view.onNewOrder(BID, new BigDecimal(20), 10, 1001L);
@@ -102,6 +121,9 @@ class Level2ViewImplTest {
         assertEquals(150, view.getSizeForPriceLevel(ASK, new BigDecimal(24)), "Size for price level");
     }
 
+    /**
+     * Create new orders, and test the correctness of getBookDepth().
+     */
     @Test
     void getBookDepth() {
         view.onNewOrder(BID, new BigDecimal(20), 10, 1001L);
@@ -117,6 +139,9 @@ class Level2ViewImplTest {
         assertEquals(2, view.getBookDepth(ASK), "Book depth");
     }
 
+    /**
+     * Create new orders, then cancel and modify some of them. Then, verify the correctness od getTopOfBook().
+     */
     @Test
     void getTopOfBook() {
         view.onNewOrder(BID, new BigDecimal(20), 10, 1001L);
