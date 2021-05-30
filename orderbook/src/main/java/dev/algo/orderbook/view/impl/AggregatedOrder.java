@@ -38,11 +38,17 @@ public class AggregatedOrder {
         return order;
     }
 
+
+
     /**
      * Aggregated total size of all the orders at this price point.
      * @return
      */
     public long getTotalSize() {
         return totalSize;
+    }
+
+    public void subtractSize(long quantity) {
+        totalSize-=quantity;
     }
 }

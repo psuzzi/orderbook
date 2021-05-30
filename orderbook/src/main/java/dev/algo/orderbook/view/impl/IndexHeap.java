@@ -1,9 +1,6 @@
 package dev.algo.orderbook.view.impl;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class IndexHeap<K,V> extends IndexMaxPQ<K>{
 
@@ -13,6 +10,7 @@ public class IndexHeap<K,V> extends IndexMaxPQ<K>{
     private int currentIndex = 0;
     private Map<K,V> kvMap = new HashMap<>();
     private Map<K, Integer> kiMap = new HashMap<>();
+    private LinkedList<Integer> freeIndices = new LinkedList<>();
 
     public IndexHeap(Comparator<K> comparator) {
         super(DEFAULT_INITIAL_CAPACITY, comparator);
@@ -31,11 +29,11 @@ public class IndexHeap<K,V> extends IndexMaxPQ<K>{
     }
 
     public void removeKey(K price) {
-        int deleteIndex = kiMap.get(price);
-        delete(deleteIndex);// removes the key from the heap
+        int deleteKeyIndex = kiMap.get(price);
+        delete(deleteKeyIndex);// removes the key from the heap
         kvMap.remove(price);
         kiMap.remove(price);
-        currentIndex--;
+        freeIndices.add(deleteKeyIndex);
     }
 
     /**
@@ -44,10 +42,10 @@ public class IndexHeap<K,V> extends IndexMaxPQ<K>{
      * @param aggregatedOrder
      */
     public void put(K price, V aggregatedOrder) {
-        kiMap.put(price, currentIndex);
+        int keyIndex = (freeIndices.isEmpty()) ? currentIndex++ : freeIndices.remove();
+        kiMap.put(price, keyIndex);
         kvMap.put(price, aggregatedOrder);
-        insert(currentIndex, price);
-        currentIndex++;
+        insert(keyIndex, price);
     }
 
     public K topKey() {

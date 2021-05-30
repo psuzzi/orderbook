@@ -86,6 +86,7 @@ public class Level2ViewImpl implements Level2View {
             cancelOrder(restingOrderId);
         } else {
             order.setQuantity(order.getQuantity()-quantity);
+            aggregatedOrder.subtractSize(quantity);
         }
 
     }
@@ -93,6 +94,7 @@ public class Level2ViewImpl implements Level2View {
     @Override
     public long getSizeForPriceLevel(Side side, BigDecimal price) {
         AggregatedOrder aggregatedOrder = getHeap(side).getValue(price);
+        if(aggregatedOrder==null) throw new IllegalArgumentException("This side does not have this price level");
         return aggregatedOrder.getTotalSize();
     }
 

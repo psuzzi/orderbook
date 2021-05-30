@@ -1,5 +1,4 @@
 package dev.algo.orderbook.algo.rs;
-
 /******************************************************************************
  *  Compilation:  javac IndexMaxPQ.java
  *  Execution:    java IndexMaxPQ

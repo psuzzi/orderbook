@@ -7,9 +7,33 @@ import java.util.NoSuchElementException;
 import static java.lang.Math.min;
 
 /**
- * Max Priority queue using a binary heap.
+ *  The {@code IndexMaxPQ} class represents an indexed priority queue of generic keys.
+ *  It supports the usual <em>insert</em> and <em>delete-the-maximum</em>
+ *  operations, along with <em>delete</em> and <em>change-the-key</em>
+ *  methods. In order to let the client refer to items on the priority queue,
+ *  an integer between {@code 0} and {@code maxN - 1}
+ *  is associated with each key—the client
+ *  uses this integer to specify which key to delete or change.
+ *  It also supports methods for peeking at a maximum key,
+ *  testing if the priority queue is empty, and iterating through
+ *  the keys.
+ *  <p>
+ *  This implementation uses a <em>binary heap</em> along with an
+ *  array to associate keys with integers in the given range.
+ *  The <em>insert</em>, <em>delete-the-maximum</em>, <em>delete</em>,
+ *  <em>change-key</em>, <em>decrease-key</em>, and <em>increase-key</em>
+ *  operations take &Theta;(log <em>n</em>) time in the worst case,
+ *  where <em>n</em> is the number of elements in the priority queue.
+ *  Construction takes time proportional to the specified capacity.
+ *  <p>
+ *  @see <a href="https://algs4.cs.princeton.edu/24pq">Section 2.4</a> of
+ *  <i>Algorithms, 4th Edition</i> by Robert Sedgewick and Kevin Wayne.
  *
- * @param <Key> the generic type of key on this priority queue
+ *  @author Robert Sedgewick
+ *  @author Kevin Wayne
+ *  @author Patrik Suzzi
+ *
+ *  @param <Key> the generic type of key on this priority queue
  */
 public class IndexMaxPQ<Key> {
 
@@ -137,54 +161,7 @@ public class IndexMaxPQ<Key> {
         keys[max] = null;    // to help with garbage collection
         pq[n+1] = -1;        // not needed
 
-        // halve size if needed
-        if ((n > 0) && (n == (pq.length - 1) / 4)){
-            resize(pq.length / 2);
-        }
         return max;
-    }
-
-    /**
-     * Returns the key associated with index {@code i}.
-     *
-     * @param  i the index of the key to return
-     * @return the key associated with index {@code i}
-     * @throws IllegalArgumentException unless {@code 0 <= i < maxN}
-     * @throws NoSuchElementException no key is associated with index {@code i}
-     */
-    public Key keyOf(int i) {
-        validateIndex(i);
-        if (!contains(i)) throw new NoSuchElementException("index is not in the priority queue");
-        else return keys[i];
-    }
-
-    /**
-     * Change the key associated with index {@code i} to the specified value.
-     *
-     * @param  i the index of the key to change
-     * @param  key change the key associated with index {@code i} to this key
-     * @throws IllegalArgumentException unless {@code 0 <= i < maxN}
-     */
-    public void changeKey(int i, Key key) {
-        validateIndex(i);
-        if (!contains(i)) throw new NoSuchElementException("index is not in the priority queue");
-        keys[i] = key;
-        swim(qp[i]);
-        sink(qp[i]);
-    }
-
-    /**
-     * Change the key associated with index {@code i} to the specified value.
-     *
-     * @param  i the index of the key to change
-     * @param  key change the key associated with index {@code i} to this key
-     * @throws IllegalArgumentException unless {@code 0 <= i < maxN}
-     * @deprecated Replaced by {@code changeKey(int, Key)}.
-     */
-    @Deprecated
-    public void change(int i, Key key) {
-        validateIndex(i);
-        changeKey(i, key);
     }
 
     /**
@@ -203,11 +180,6 @@ public class IndexMaxPQ<Key> {
         sink(index);
         keys[i] = null;
         qp[i] = -1;
-
-        // halve size if needed
-//        if ((n > 0) && (n == (pq.length - 1) / 4)){
-//            resize(pq.length / 2);
-//        }
 
     }
 
